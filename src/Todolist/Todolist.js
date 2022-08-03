@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import todolist from './todolist.css'
 import Axios from 'axios'
 export default function Todolist() {
+    const inputRef = useRef()
     const [state, setState] = useState({
         taskList: [],
         values: {
@@ -79,6 +80,8 @@ export default function Todolist() {
                 })
             })
         }
+        inputRef.current.value = ''
+        inputRef.current.focus()
 
     }
 
@@ -123,17 +126,17 @@ export default function Todolist() {
     }
 
     const renderTaskToDo = () => {
-        const res = state.taskList.filter(item => !item.status).map((item, index) => {
+        const res = state.taskList?.filter(item => item.taskName != '' && !item.status)?.map((item, index) => {
             return (
                 <li key={index}>
                     <span>{item.taskName}</span>
                     <div className="buttons">
-                        <button className="remove" onClick={() => delTask(item)}>
+                        <button className="remove" onClick={() => delTask(item)}>   
                             <i className="fa fa-trash-alt" />
                         </button>
                         <button className="complete " onClick={() => doneTask(item)}>
                             <i title='Done' className="far fa-check-circle" />
-                        </button>
+                        </button>   
                     </div>
                 </li>
             )
@@ -171,11 +174,15 @@ export default function Todolist() {
                         <div className="card__content">
                             <div className="card__title">
                                 <h2>My Tasks</h2>
-                                <p>July 30,2022</p>
+                                <p>By Nguyen Duy Khanh</p>
                             </div>
                             <div className="card__add">
-                                <input id="newTask" type="text" placeholder="Enter an activity..." onChange={handleChange} />
-                                <button id="addItem" onClick={addTask}>
+                                <input id="newTask" type="text" ref={inputRef} placeholder="Enter an activity..." onChange={handleChange} onKeyPress={(e)=>{
+                                    if(e.key =='Enter'){
+                                        addTask()
+                                    }
+                                }} />
+                                <button id="addItem" type='submit' onClick={addTask}>
                                     <i className="fa fa-plus" />
                                 </button>
                             </div>
